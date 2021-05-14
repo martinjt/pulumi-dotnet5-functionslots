@@ -117,7 +117,32 @@ public class FunctionApp : ComponentResource
 
         var slotConfigNames = new WebAppSlotConfigurationNames(name, new WebAppSlotConfigurationNamesArgs {
             Name = app.Name,
+            ResourceGroupName = args.ResourceGroupName,
             AppSettingNames = { "FUNCTIONS_WORKER_RUNTIME", "FUNCTIONS_EXTENSION_VERSION" }
+        });
+
+        var stagingSlot = new WebAppSlot($"{name}-slot", new WebAppSlotArgs()
+        {
+            Name = app.Name,
+            Slot = "staging",
+            ResourceGroupName = args.ResourceGroupName,
+            SiteConfig = new SiteConfigArgs
+            {
+                AppSettings = new[]
+                {
+                    new NameValuePairArgs
+                    {
+                        Name = "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG",
+                        Value = "1"
+                    },
+                    new NameValuePairArgs
+                    {
+                        Name = "WEBSITE_SWAP_WARMUP_PING_PATH",
+                        Value = "/helloworld"
+                    }
+                }
+            },
+            
         });
 
         this.AppName = app.Name;
@@ -169,8 +194,8 @@ public class FunctionApp : ComponentResource
         {
             var primaryStorageKey = keys.Keys[0].Value;
 
-                // Build the connection string to the storage account.
-                return Output.Format($"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={primaryStorageKey}");
+            // Build the connection string to the storage account.
+            return Output.Format($"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={primaryStorageKey}");
         });
     }
 
