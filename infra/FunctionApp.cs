@@ -115,6 +115,11 @@ public class FunctionApp : ComponentResource
             }
         });
 
+        var slotConfigNames = new WebAppSlotConfigurationNames(name, new WebAppSlotConfigurationNamesArgs {
+            Name = app.Name,
+            AppSettingNames = { "FUNCTIONS_WORKER_RUNTIME", "FUNCTIONS_EXTENSION_VERSION" }
+        });
+
         this.AppName = app.Name;
         this.AppId = app.Id;
         this.DefaultHostname = app.DefaultHostName;
